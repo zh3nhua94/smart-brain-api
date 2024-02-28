@@ -1,0 +1,50 @@
+version: "3.8"
+
+services:
+  #Backend API
+  smart-brain-api:
+    container_name: smart-brain-backend
+    image: smart-brain-backend
+    build:
+      context: .
+      target: development
+    volumes:
+      - ./:/app
+    ports:
+      - 3000:3000
+    depends_on:
+      - db
+    networks:
+      - smart-brain-shared-network
+
+  #Postgres
+  db:
+    container_name: smart-brain-db
+    image: postgres-db
+    build:
+      context: ./scripts/db/
+      target: db
+    restart: always
+    environment:
+      POSTGRES_USER: "${POSTGRES_USER}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+      POSTGRES_DB: "${POSTGRES_DB}"
+    ports:
+      - "${POSTGRES_PORT}:5432"
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    env_file:
+      - .env
+    networks:
+      - smart-brain-shared-network
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+
+volumes:
+  postgres:
+networks:
+  smart-brain-shared-network:
+    driver: bridge

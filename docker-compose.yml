@@ -43,6 +43,15 @@ services:
     ports:
       - 8080:8080
 
+  #Redis
+  redis:
+    container_name: smart-brain-redis
+    image: redis:7.2.4
+    ports:
+      - 6379:6379
+    networks:
+      - smart-brain-shared-network
+
 volumes:
   postgres:
 networks:
